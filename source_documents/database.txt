@@ -1,0 +1,70 @@
+-- Database: RestaurantDB
+
+-- Table: Customers
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Phone VARCHAR(15),
+    Address VARCHAR(255)
+);
+
+-- Table: Menu
+CREATE TABLE Menu (
+    MenuItemID INT PRIMARY KEY AUTO_INCREMENT,
+    ItemName VARCHAR(100) NOT NULL,
+    Description TEXT,
+    Price DECIMAL(5, 2) NOT NULL,
+    Category VARCHAR(50)
+);
+
+-- Table: Orders
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT NOT NULL,
+    OrderDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    TotalAmount DECIMAL(10, 2),
+    Status VARCHAR(50) DEFAULT 'Pending',
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+-- Table: OrderItems
+CREATE TABLE OrderItems (
+    OrderItemID INT PRIMARY KEY AUTO_INCREMENT,
+    OrderID INT NOT NULL,
+    MenuItemID INT NOT NULL,
+    Quantity INT NOT NULL,
+    Price DECIMAL(5, 2) NOT NULL,
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (MenuItemID) REFERENCES Menu(MenuItemID)
+);
+
+-- Example Relationships:
+
+-- One Customer can have multiple Orders
+-- One Order can have multiple MenuItems (via OrderItems)
+-- One MenuItem can appear in multiple Orders (via OrderItems)
+
+-- Sample Data
+INSERT INTO Customers (FirstName, LastName, Email, Phone, Address)
+VALUES
+('John', 'Doe', 'john.doe@example.com', '555-1234', '123 Elm St'),
+('Jane', 'Smith', 'jane.smith@example.com', '555-5678', '456 Oak St');
+
+INSERT INTO Menu (ItemName, Description, Price, Category)
+VALUES
+('Margherita Pizza', 'Classic margherita pizza with fresh tomatoes, mozzarella, and basil.', 8.99, 'Pizza'),
+('Pepperoni Pizza', 'Pepperoni pizza with mozzarella and tomato sauce.', 9.99, 'Pizza'),
+('Caesar Salad', 'Fresh romaine lettuce with Caesar dressing, croutons, and Parmesan cheese.', 6.99, 'Salad');
+
+INSERT INTO Orders (CustomerID, TotalAmount, Status)
+VALUES
+(1, 18.98, 'Completed'),
+(2, 9.99, 'Pending');
+
+INSERT INTO OrderItems (OrderID, MenuItemID, Quantity, Price)
+VALUES
+(1, 1, 2, 8.99),
+(2, 2, 1, 9.99);
+
